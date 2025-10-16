@@ -1,0 +1,180 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #FFFFFF;
+  color: #212529;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// Material Theme Override for EG Brand Colors
+.mat-mdc-button.mat-primary {
+  --mdc-filled-button-container-color: #C8102E;
+  --mdc-filled-button-label-text-color: white;
+  --mat-filled-button-state-layer-color: white;
+  --mat-filled-button-ripple-color: rgba(255, 255, 255, 0.2);
+  --mat-filled-button-hover-state-layer-color: rgba(255, 255, 255, 0.08);
+  --mat-filled-button-focus-state-layer-color: rgba(255, 255, 255, 0.12);
+}
+
+.mat-mdc-fab.mat-primary {
+  --mdc-fab-container-color: #C8102E;
+  --mdc-fab-icon-color: white;
+  --mat-fab-state-layer-color: white;
+  --mat-fab-ripple-color: rgba(255, 255, 255, 0.2);
+  --mat-fab-hover-state-layer-color: rgba(255, 255, 255, 0.08);
+  --mat-fab-focus-state-layer-color: rgba(255, 255, 255, 0.12);
+}
+
+.mat-mdc-icon-button.mat-primary {
+  --mdc-icon-button-icon-color: #C8102E;
+  --mat-icon-button-state-layer-color: #C8102E;
+  --mat-icon-button-ripple-color: rgba(200, 16, 46, 0.1);
+  --mat-icon-button-hover-state-layer-color: rgba(200, 16, 46, 0.08);
+  --mat-icon-button-focus-state-layer-color: rgba(200, 16, 46, 0.12);
+}
+
+// Form field customizations
+.mat-mdc-form-field.mat-accent {
+  --mdc-filled-text-field-focus-active-indicator-color: #C8102E;
+  --mdc-filled-text-field-focus-label-text-color: #C8102E;
+  --mdc-outlined-text-field-focus-outline-color: #C8102E;
+  --mdc-outlined-text-field-focus-label-text-color: #C8102E;
+}
+
+// Custom utility classes
+.text-primary {
+  color: #C8102E !important;
+}
+
+.bg-primary {
+  background-color: #C8102E !important;
+}
+
+.text-muted {
+  color: #6C757D !important;
+}
+
+.text-dark {
+  color: #212529 !important;
+}
+
+.text-light {
+  color: #F8F9FA !important;
+}
+
+// Scrollbar styling for the entire application
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F8F9FA;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DEE2E6;
+  border-radius: 4px;
+  border: 1px solid #F8F9FA;
+
+  &:hover {
+    background: #ADB5BD;
+  }
+}
+
+// Focus states for accessibility
+*:focus {
+  outline: 2px solid #C8102E;
+  outline-offset: 2px;
+}
+
+button:focus,
+.mat-mdc-button:focus,
+.mat-mdc-fab:focus,
+.mat-mdc-icon-button:focus {
+  outline: 2px solid #C8102E;
+  outline-offset: 2px;
+}
+
+// Animation utilities
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.4s ease-in-out;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Loading spinner
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #F8F9FA;
+  border-radius: 50%;
+  border-top-color: #C8102E;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Responsive typography
+@media (max-width: 768px) {
+  body {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+}

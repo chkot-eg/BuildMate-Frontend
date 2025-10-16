@@ -1,0 +1,115 @@
+<div class="chat-container">
+  <!-- Header Bar -->
+  <div class="header-bar">
+    <div class="header-nav">
+      <button class="nav-btn active">SIGNOFF</button>
+      <button class="nav-btn">ØKONOMI</button>
+      <button class="nav-btn highlight">ORDRE/FAKTURA</button>
+      <button class="nav-btn">BUTIKK</button>
+      <button class="nav-btn">LAGER/INNKJØP</button>
+      <button class="nav-btn">VAREADMINISTRASJON</button>
+    </div>
+    <button class="economy-btn">ØKONOMIBUTIKER</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <div class="chat-content">
+      <div class="chat-header">
+        <h2>IBM i Database Assistant</h2>
+        <p>Natural Language Query Interface</p>
+      </div>
+
+      <!-- Messages Container -->
+      <div class="messages-container" #scrollContainer>
+        @if ((messages$ | async)?.length === 0) {
+          <div class="welcome-message">
+            <div class="welcome-icon">
+              <mat-icon>chat_bubble_outline</mat-icon>
+            </div>
+            <h3>Velkommen til IBM i Assistant</h3>
+            <p>Still spørsmål om databasen din på naturlig språk</p>
+
+            <div class="quick-start">
+              <p>Prøv disse kommandoene:</p>
+              <div class="quick-actions">
+                @for (action of quickActions; track action.label) {
+                  <button class="quick-btn" (click)="executeQuickAction(action.prompt)">
+                    {{ action.label }}
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        @for (message of messages$ | async; track message.id) {
+          <div class="message" [ngClass]="'message-' + message.role">
+            <div class="message-avatar">
+              <mat-icon>{{ message.role === 'user' ? 'person' : 'smart_toy' }}</mat-icon>
+            </div>
+            <div class="message-bubble">
+              <div class="message-header">
+                <span class="message-role">{{ message.role === 'user' ? 'Du' : 'Assistant' }}</span>
+                <span class="message-time">{{ message.timestamp | date:'HH:mm' }}</span>
+              </div>
+              <div class="message-content" [ngClass]="{'error': message.isError}">
+                {{ message.content }}
+              </div>
+              @if (message.metadata && message.metadata.executionTime) {
+                <div class="message-meta">
+                  <span class="meta-item">
+                    <mat-icon>schedule</mat-icon>
+                    {{ message.metadata.executionTime }}ms
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (isLoading$ | async) {
+          <div class="message message-assistant">
+            <div class="message-avatar">
+              <mat-icon>smart_toy</mat-icon>
+            </div>
+            <div class="message-bubble loading">
+              <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Input Section -->
+      <div class="input-section">
+        <div class="input-wrapper">
+          <mat-form-field appearance="outline" class="message-input">
+            <input matInput
+                   [formControl]="messageControl"
+                   (keypress)="onKeyPress($event)"
+                   placeholder="Skriv inn din forespørsel..."
+                   autocomplete="off">
+          </mat-form-field>
+          <button mat-flat-button
+                  color="primary"
+                  class="send-btn"
+                  (click)="sendMessage()"
+                  [disabled]="messageControl.invalid || (isLoading$ | async)">
+            <mat-icon>send</mat-icon>
+            Send
+          </button>
+          <button mat-icon-button
+                  class="clear-btn"
+                  (click)="clearChat()"
+                  matTooltip="Tøm samtale">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

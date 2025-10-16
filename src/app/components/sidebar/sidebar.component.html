@@ -1,0 +1,32 @@
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <div style="text-align: center;">
+        <img src="logo.png" alt="Company Logo" class="logo-image" width="25%">
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-menu">
+    @for (item of menuItems; track item.label) {
+      <div class="menu-section" [class.active]="item.active">
+        <div class="menu-header" (click)="toggleExpand(item)">
+          <span class="menu-title">{{ item.label }}</span>
+          <mat-icon class="expand-icon" [class.expanded]="isExpanded(item)">
+            keyboard_arrow_down
+          </mat-icon>
+        </div>
+
+        @if (isExpanded(item) && item.children) {
+          <div class="menu-items">
+            @for (child of item.children; track child) {
+              <div class="menu-item">
+                {{ child }}
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </nav>
+</div>

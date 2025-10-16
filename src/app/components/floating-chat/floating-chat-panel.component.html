@@ -1,0 +1,284 @@
+<!-- Backdrop overlay with blur effect -->
+<div class="chat-panel-overlay"
+     [class.open]="isOpen$ | async"
+     [class.fullscreen]="(state$ | async)?.size === 'fullscreen'"
+     (click)="onOverlayClick($event)"></div>
+
+<!-- Draggable and Resizable Chat Panel -->
+<div class="chat-panel"
+     #chatPanel
+     cdkDrag
+     [cdkDragDisabled]="(state$ | async)?.size === 'fullscreen' || (state$ | async)?.size === 'minimized'"
+     [cdkDragFreeDragPosition]="dragPosition"
+     (cdkDragEnded)="onDragEnded($event)"
+     [class.open]="isOpen$ | async"
+     [class.minimized]="(state$ | async)?.size === 'minimized'"
+     [class.expanded]="(state$ | async)?.size === 'expanded'"
+     [class.fullscreen]="(state$ | async)?.size === 'fullscreen'"
+     [style.width.px]="(state$ | async)?.size === 'fullscreen' ? null : (state$ | async)?.width"
+     [style.height.px]="(state$ | async)?.size === 'fullscreen' ? null : (state$ | async)?.height">
+
+  <!-- Resize Handles -->
+  @if ((state$ | async)?.size === 'normal') {
+    <div class="resize-handle resize-n" (mousedown)="startResize($event, 'n')"></div>
+    <div class="resize-handle resize-e" (mousedown)="startResize($event, 'e')"></div>
+    <div class="resize-handle resize-s" (mousedown)="startResize($event, 's')"></div>
+    <div class="resize-handle resize-w" (mousedown)="startResize($event, 'w')"></div>
+    <div class="resize-handle resize-nw" (mousedown)="startResize($event, 'nw')"></div>
+    <div class="resize-handle resize-ne" (mousedown)="startResize($event, 'ne')"></div>
+    <div class="resize-handle resize-sw" (mousedown)="startResize($event, 'sw')"></div>
+    <div class="resize-handle resize-se" (mousedown)="startResize($event, 'se')"></div>
+  }
+
+  <!-- Chat Header with drag handle -->
+  <div class="chat-header" cdkDragHandle>
+    <div class="header-left">
+      <mat-icon class="support-icon">support_agent</mat-icon>
+      <div class="header-text">
+        <h3>Build Mate</h3>
+        <span class="status">
+          <span class="status-dot"></span>
+          Online
+        </span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-icon-button 
+              (click)="exportChat()" 
+              matTooltip="Export Chat" 
+              class="header-btn">
+        <mat-icon>download</mat-icon>
+      </button>
+      <button mat-icon-button 
+              (click)="clearChat()" 
+              matTooltip="Clear Chat" 
+              class="header-btn">
+        <mat-icon>clear_all</mat-icon>
+      </button>
+      <button mat-icon-button 
+              (click)="minimizeChat($event)" 
+              [matTooltip]="(state$ | async)?.size === 'minimized' ? 'Restore' : 'Minimize'" 
+              class="header-btn">
+        <mat-icon>{{ (state$ | async)?.size === 'minimized' ? 'add' : 'remove' }}</mat-icon>
+      </button>
+      <button mat-icon-button 
+              (click)="expandChat($event)" 
+              [matTooltip]="(state$ | async)?.size === 'expanded' ? 'Normal Size' : 'Expand'" 
+              class="header-btn">
+        <mat-icon>{{ (state$ | async)?.size === 'expanded' ? 'close_fullscreen' : 'open_in_full' }}</mat-icon>
+      </button>
+      <button mat-icon-button 
+              (click)="maximizeChat($event)" 
+              [matTooltip]="(state$ | async)?.size === 'fullscreen' ? 'Exit Fullscreen' : 'Fullscreen'" 
+              class="header-btn">
+        <mat-icon>{{ (state$ | async)?.size === 'fullscreen' ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+      </button>
+      <button mat-icon-button 
+              (click)="closeChat($event)" 
+              matTooltip="Close" 
+              class="header-btn close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages Container -->
+  <div class="messages-container" #scrollContainer (scroll)="onScroll($event)">
+    @if ((messages$ | async)?.length === 0) {
+      <div class="welcome-message">
+        <div class="welcome-animation">
+          <mat-icon>chat_bubble_outline</mat-icon>
+        </div>
+        <h4>Hi! How can I help you?</h4>
+        <p>I'm here to assist with any questions you have.</p>
+        <div class="quick-questions">
+          <button class="quick-btn" (click)="executeQuickAction('Show me all tables in the database')">
+            <mat-icon>storage</mat-icon>
+            Show Tables
+          </button>
+          <button class="quick-btn" (click)="executeQuickAction('Show customer information')">
+            <mat-icon>people</mat-icon>
+            Customer Info
+          </button>
+          <button class="quick-btn" (click)="executeQuickAction('Show recent orders from the last 7 days')">
+            <mat-icon>receipt</mat-icon>
+            Recent Orders
+          </button>
+          <button class="quick-btn" (click)="executeQuickAction('Check inventory status for products')">
+            <mat-icon>inventory</mat-icon>
+            Inventory Status
+          </button>
+          <button class="quick-btn" (click)="executeQuickAction('Help with SQL queries')">
+            <mat-icon>code</mat-icon>
+            SQL Help
+          </button>
+        </div>
+      </div>
+    }
+
+    @for (message of messages$ | async; track message.id) {
+      <div class="message" [ngClass]="'message-' + message.role">
+        @if (message.role === 'assistant') {
+          <div class="avatar assistant">
+            <mat-icon>support_agent</mat-icon>
+          </div>
+        }
+        <div class="message-bubble">
+          <div class="message-content" [class.error-content]="message.isError">
+            {{ message.content }}
+          </div>
+          
+          <!-- Metadata Display -->
+          @if (message.metadata && message.role === 'assistant') {
+            <div class="message-metadata">
+              @if (message.metadata.executionTime) {
+                <span class="metadata-chip" matTooltip="Execution Time">
+                  <mat-icon>schedule</mat-icon>
+                  {{ message.metadata.executionTime }}ms
+                </span>
+              }
+              @if (message.metadata.tablesUsed && message.metadata.tablesUsed.length > 0) {
+                <span class="metadata-chip" matTooltip="Tables Used">
+                  <mat-icon>table_chart</mat-icon>
+                  {{ message.metadata.tablesUsed.join(', ') }}
+                </span>
+              }
+              @if (message.metadata.tablesUsed && message.metadata.tablesUsed.length === 0) {
+                <span class="metadata-chip warning" matTooltip="No database verification">
+                  <mat-icon>warning</mat-icon>
+                  Not verified
+                </span>
+              }
+              @if (message.metadata.hasContext) {
+                <span class="metadata-chip" matTooltip="Context Used">
+                  <mat-icon>history</mat-icon>
+                  Context
+                </span>
+              }
+              @if (message.metadata.cacheHit) {
+                <span class="metadata-chip" matTooltip="Cached Response">
+                  <mat-icon>cached</mat-icon>
+                  Cached
+                </span>
+              }
+            </div>
+          }
+          
+          <div class="message-time">
+            {{ message.timestamp | date:'HH:mm' }}
+          </div>
+        </div>
+        @if (message.role === 'user') {
+          <div class="avatar user">
+            <mat-icon>person</mat-icon>
+          </div>
+        }
+      </div>
+    }
+
+    @if (isLoading$ | async) {
+      <div class="message message-assistant">
+        <div class="avatar assistant">
+          <mat-icon>support_agent</mat-icon>
+        </div>
+        <div class="message-bubble">
+          <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Input Section -->
+  <div class="input-section">
+    <!-- Action Buttons Row -->
+    <div class="input-actions-row">
+      <div class="left-actions">
+        <button mat-icon-button 
+                (click)="toggleContext()" 
+                [matTooltip]="useContext ? 'Disable conversation context' : 'Enable conversation context'" 
+                [class.context-active]="useContext"
+                class="action-btn context-btn">
+          <mat-icon>{{ useContext ? 'history' : 'history_toggle_off' }}</mat-icon>
+        </button>
+        <button mat-icon-button 
+                (click)="showQuickActions = !showQuickActions"
+                [matTooltip]="showQuickActions ? 'Hide quick actions' : 'Show quick actions'"
+                [class.active]="showQuickActions"
+                class="action-btn">
+          <mat-icon>{{ showQuickActions ? 'expand_less' : 'apps' }}</mat-icon>
+        </button>
+        <button mat-icon-button 
+                class="action-btn attach-btn" 
+                matTooltip="Attach file (coming soon)" 
+                disabled>
+          <mat-icon>attach_file</mat-icon>
+        </button>
+      </div>
+      
+      <div class="right-actions">
+        <button mat-icon-button 
+                (click)="clearChat()"
+                matTooltip="Clear conversation"
+                class="action-btn clear-btn">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <span class="status-indicator" [class.active]="useContext">
+          <mat-icon>{{ useContext ? 'cloud_done' : 'cloud_off' }}</mat-icon>
+          <span class="status-text">{{ useContext ? 'Context' : 'No Context' }}</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Quick Actions Expandable -->
+    @if (showQuickActions) {
+      <div class="quick-actions-inline">
+        <div class="quick-action-chips">
+          <button mat-stroked-button 
+                  class="quick-chip"
+                  *ngFor="let action of quickActions"
+                  (click)="executeQuickAction(action.prompt)">
+            <mat-icon>{{ action.icon }}</mat-icon>
+            {{ action.label }}
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Input Field with Enhanced Features -->
+    <div class="input-container">
+      <mat-form-field appearance="outline" class="message-input">
+        <mat-label>Ask me anything...</mat-label>
+        <textarea matInput
+                  #messageInput
+                  [formControl]="messageControl"
+                  (keydown)="onKeyDown($event)"
+                  placeholder="Type your message here..."
+                  autocomplete="off"
+                  rows="1"
+                  cdkTextareaAutosize
+                  cdkAutosizeMinRows="1"
+                  cdkAutosizeMaxRows="5"></textarea>
+        <mat-hint align="start">
+          <span class="hint-icon"><mat-icon>info</mat-icon></span>
+          {{ getInputHint() }}
+        </mat-hint>
+        <mat-hint align="end">
+          {{ messageControl.value?.length || 0 }} / 2000
+        </mat-hint>
+      </mat-form-field>
+      
+      <button mat-fab
+              color="primary"
+              class="send-btn"
+              (click)="sendMessage()"
+              [disabled]="messageControl.invalid || (isLoading$ | async)"
+              [matTooltip]="getSendButtonTooltip()">
+        <mat-icon>{{ (isLoading$ | async) ? 'hourglass_empty' : 'send' }}</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
