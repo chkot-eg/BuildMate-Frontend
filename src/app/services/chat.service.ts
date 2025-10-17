@@ -135,7 +135,7 @@ export class ChatService {
     const stoppedMessage: Message = {
       id: this.generateMessageId(),
       role: 'assistant',
-      content: 'Request stopped by user.',
+      content: ' ',
       timestamp: new Date(),
       isError: false
     };
