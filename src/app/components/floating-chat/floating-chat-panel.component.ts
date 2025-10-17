@@ -9,7 +9,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { ChatToggleService, ChatState, ChatSize } from '../../services/chat-toggle.service';
 import { ChatService } from '../../services/chat.service';
 import { Message } from '../../models/message.model';
@@ -29,8 +28,7 @@ import { Observable } from 'rxjs';
     MatProgressSpinnerModule,
     MatTooltipModule,
     CdkDrag,
-    CdkDragHandle,
-    CdkTextareaAutosize
+    CdkDragHandle
   ],
   templateUrl: './floating-chat-panel.component.html',
   styleUrls: ['./floating-chat-panel.component.scss']
@@ -44,7 +42,10 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
   state$: Observable<ChatState>;
   messages$: Observable<Message[]>;
   isLoading$: Observable<boolean>;
-  messageControl = new FormControl('', [Validators.required, Validators.maxLength(2000)]);
+  messageControl = new FormControl('', {
+    validators: [Validators.required, Validators.maxLength(2000)],
+    updateOn: 'change' // Keep immediate updates but optimize rendering
+  });
 
   // Resize state
   isResizing = false;
@@ -181,7 +182,25 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
   sendMessage(): void {
     if (this.messageControl.valid && this.messageControl.value?.trim()) {
       const message = this.messageControl.value.trim();
-      this.messageControl.reset();
+
+      // Store reference to input element before any changes
+      const inputElement = this.messageInput?.nativeElement;
+
+      // Clear the input immediately without triggering validations
+      this.messageControl.setValue('', {
+        emitEvent: false,
+        emitModelToViewChange: true,
+        emitViewToModelChange: false
+      });
+
+      // Mark as pristine to prevent validation flicker
+      this.messageControl.markAsPristine();
+      this.messageControl.markAsUntouched();
+
+      // Reset textarea height to default
+      if (inputElement) {
+        inputElement.style.height = '52px';
+      }
 
       // Force scroll to bottom when user sends a message
       this.isUserScrolling = false;
@@ -191,14 +210,28 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
         next: (response) => {
           // Message sent and response received successfully
           this.scrollToBottom();
+
+          // Restore focus after processing completes
+          if (inputElement) {
+            inputElement.focus();
+          }
         },
         error: (error) => {
           console.error('Chat error:', error);
           // Error message is already handled in the service
           this.scrollToBottom();
+
+          // Restore focus even on error
+          if (inputElement) {
+            inputElement.focus();
+          }
         }
       });
     }
+  }
+
+  stopRequest(): void {
+    this.chatService.stopCurrentRequest();
   }
 
   clearChat(): void {
@@ -224,7 +257,7 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
           element.scrollTop = element.scrollHeight;
         });
       }
-    } catch(err) {
+    } catch (err) {
       // Ignore scroll errors - this can happen during component initialization
       console.debug('Scroll error (non-critical):', err);
     }
@@ -239,7 +272,7 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
           behavior: 'smooth'
         });
       }
-    } catch(err) {
+    } catch (err) {
       console.debug('Scroll error (non-critical):', err);
     }
   }
@@ -255,14 +288,34 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
     // Handle Enter key - send message if not holding Shift
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      this.sendMessage();
+
+      // Only send if not currently loading and has valid input
+      if (!this.isLoading && this.messageControl.valid && this.messageControl.value?.trim()) {
+        this.sendMessage();
+      }
     }
     // Shift+Enter allows new line
   }
 
+  adjustTextareaHeight(): void {
+    const textarea = this.messageInput?.nativeElement;
+    if (!textarea) return;
+
+    // Reset height to auto to get the correct scrollHeight
+    requestAnimationFrame(() => {
+      textarea.style.height = 'auto';
+
+      // Calculate new height based on content
+      const newHeight = Math.min(Math.max(textarea.scrollHeight, 52), 120);
+
+      // Apply new height smoothly
+      textarea.style.height = `${newHeight}px`;
+    });
+  }
+
   getInputHint(): string {
     if (this.isLoading) {
-      return 'Processing your request...';
+      return 'Processing your request... Click Stop to cancel';
     }
     return 'Press Enter to send, Shift+Enter for new line';
   }
@@ -282,10 +335,10 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
     const scrollTop = element.scrollTop;
     const scrollHeight = element.scrollHeight;
     const clientHeight = element.clientHeight;
-    
+
     // Check if user is at the bottom (within 50px threshold)
     const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
-    
+
     // If user scrolls up, mark as user scrolling
     if (!isAtBottom) {
       this.isUserScrolling = true;

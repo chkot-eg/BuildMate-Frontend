@@ -16,13 +16,11 @@ import { Observable } from 'rxjs';
       [class.hidden]="isOpen$ | async"
       mat-fab
       color="primary"
-      (click)="toggleChat()"
-      matBadge="1"
-      matBadgeColor="warn"
-      [matBadgeHidden]="isOpen$ | async">
+      (click)="toggleChat()">
       <mat-icon>headset_mic</mat-icon>
     </button>
   `,
+  
   styles: [`
     .floating-chat-button {
       position: fixed;
