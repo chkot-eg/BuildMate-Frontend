@@ -20,6 +20,7 @@ import { Observable } from 'rxjs';
       <mat-icon>headset_mic</mat-icon>
     </button>
   `,
+  
   styles: [`
     .floating-chat-button {
       position: fixed;
