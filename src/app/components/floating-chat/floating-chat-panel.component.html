@@ -51,10 +51,16 @@
       </button>
       <button mat-icon-button 
               (click)="clearChat()" 
-              matTooltip="Clear Chat" 
+              matTooltip="Clear conversation " 
               class="header-btn">
-        <mat-icon>clear_all</mat-icon>
+         <mat-icon>refresh</mat-icon>
       </button>
+              <!-- <button mat-icon-button 
+                (click)="clearChat()"
+                matTooltip="Clear conversation"
+                class="action-btn clear-btn">
+          <mat-icon>refresh</mat-icon>
+        </button> -->
       <button mat-icon-button 
               (click)="minimizeChat($event)" 
               [matTooltip]="(state$ | async)?.size === 'minimized' ? 'Restore' : 'Minimize'" 
@@ -204,13 +210,13 @@
                 class="action-btn context-btn">
           <mat-icon>{{ useContext ? 'history' : 'history_toggle_off' }}</mat-icon>
         </button>
-        <button mat-icon-button 
+        <!-- <button mat-icon-button 
                 (click)="showQuickActions = !showQuickActions"
                 [matTooltip]="showQuickActions ? 'Hide quick actions' : 'Show quick actions'"
                 [class.active]="showQuickActions"
                 class="action-btn">
           <mat-icon>{{ showQuickActions ? 'expand_less' : 'apps' }}</mat-icon>
-        </button>
+        </button> -->
         <button mat-icon-button 
                 class="action-btn attach-btn" 
                 matTooltip="Attach file (coming soon)" 
@@ -220,12 +226,12 @@
       </div>
       
       <div class="right-actions">
-        <button mat-icon-button 
+        <!-- <button mat-icon-button 
                 (click)="clearChat()"
                 matTooltip="Clear conversation"
                 class="action-btn clear-btn">
           <mat-icon>refresh</mat-icon>
-        </button>
+        </button> -->
         <span class="status-indicator" [class.active]="useContext">
           <mat-icon>{{ useContext ? 'cloud_done' : 'cloud_off' }}</mat-icon>
           <span class="status-text">{{ useContext ? 'Context' : 'No Context' }}</span>
@@ -250,18 +256,18 @@
 
     <!-- Input Field with Enhanced Features -->
     <div class="input-container">
-      <mat-form-field appearance="outline" class="message-input">
-        <mat-label>Ask me anything...</mat-label>
+      <mat-form-field appearance="outline" class="message-input" [class.loading]="!!(isLoading$ | async)">
         <textarea matInput
                   #messageInput
                   [formControl]="messageControl"
                   (keydown)="onKeyDown($event)"
+                  (input)="adjustTextareaHeight()"
+                  [readonly]="!!(isLoading$ | async)"
                   placeholder="Type your message here..."
                   autocomplete="off"
-                  rows="1"
-                  cdkTextareaAutosize
-                  cdkAutosizeMinRows="1"
-                  cdkAutosizeMaxRows="5"></textarea>
+                  autocorrect="off"
+                  autocapitalize="off"
+                  spellcheck="false"></textarea>
         <mat-hint align="start">
           <span class="hint-icon"><mat-icon>info</mat-icon></span>
           {{ getInputHint() }}
@@ -271,14 +277,28 @@
         </mat-hint>
       </mat-form-field>
       
-      <button mat-fab
-              color="primary"
-              class="send-btn"
-              (click)="sendMessage()"
-              [disabled]="messageControl.invalid || (isLoading$ | async)"
-              [matTooltip]="getSendButtonTooltip()">
-        <mat-icon>{{ (isLoading$ | async) ? 'hourglass_empty' : 'send' }}</mat-icon>
-      </button>
+      <!-- Send Button (visible when not loading) -->
+      @if (!(isLoading$ | async)) {
+        <button mat-fab
+                color="primary"
+                class="send-btn"
+                (click)="sendMessage()"
+                [disabled]="messageControl.invalid"
+                [matTooltip]="getSendButtonTooltip()">
+          <mat-icon>send</mat-icon>
+        </button>
+      }
+      
+      <!-- Stop Button (visible when loading) -->
+      @if (isLoading$ | async) {
+        <button mat-fab
+                color="warn"
+                class="stop-btn"
+                (click)="stopRequest()"
+                matTooltip="Stop request">
+          <mat-icon class="stop-icon">stop</mat-icon>
+        </button>
+      }
     </div>
   </div>
 </div>

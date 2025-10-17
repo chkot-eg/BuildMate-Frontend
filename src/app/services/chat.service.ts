@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { catchError, retry, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, throwError, Subject } from 'rxjs';
+import { catchError, retry, tap, takeUntil } from 'rxjs/operators';
 import { Message, ChatResponse } from '../models/message.model';
 import { environment } from '../../environments/environment';
 
@@ -16,6 +16,9 @@ export class ChatService {
   private currentSessionId: string | null = null;
   private isLoadingSubject = new BehaviorSubject<boolean>(false);
   public isLoading$ = this.isLoadingSubject.asObservable();
+
+  // Abort controller for canceling requests
+  private abortController$ = new Subject<void>();
 
   // Rate limiting
   private lastRequestTime = 0;
@@ -79,6 +82,7 @@ export class ChatService {
 
     return this.http.post<ChatResponse>(`${this.apiUrl}/api/chat/query`, body, { headers })
       .pipe(
+        takeUntil(this.abortController$), // Allow canceling the request
         retry(2),
         tap(response => {
           this.isLoadingSubject.next(false);
@@ -106,18 +110,36 @@ export class ChatService {
         catchError(error => {
           this.isLoadingSubject.next(false);
 
-          const errorMessage: Message = {
-            id: this.generateMessageId(),
-            role: 'assistant',
-            content: error.error?.error || 'An error occurred. Please try again.',
-            timestamp: new Date(),
-            isError: true
-          };
-          this.addMessage(errorMessage);
+          // Don't show error message if request was aborted by user
+          if (error.name !== 'AbortError') {
+            const errorMessage: Message = {
+              id: this.generateMessageId(),
+              role: 'assistant',
+              content: error.error?.error || 'An error occurred. Please try again.',
+              timestamp: new Date(),
+              isError: true
+            };
+            this.addMessage(errorMessage);
+          }
 
           return throwError(() => error);
         })
       );
+  }
+
+  stopCurrentRequest(): void {
+    this.abortController$.next();
+    this.isLoadingSubject.next(false);
+
+    // Add a message indicating the request was stopped
+    const stoppedMessage: Message = {
+      id: this.generateMessageId(),
+      role: 'assistant',
+      content: 'Request stopped by user.',
+      timestamp: new Date(),
+      isError: false
+    };
+    this.addMessage(stoppedMessage);
   }
 
   private addMessage(message: Message): void {
