@@ -12,6 +12,26 @@
     <button class="economy-btn">ØKONOMIBUTIKER</button>
   </div>
 
+  <!-- NEW: Performance metrics bar -->
+  @if (metrics.totalQueries > 0) {
+    <div class="metrics-bar">
+      <span class="metric">
+        <mat-icon>query_stats</mat-icon>
+        Queries: {{ metrics.totalQueries }}
+      </span>
+      <span class="metric">
+        <mat-icon>schedule</mat-icon>
+        Avg: {{ metrics.avgResponseTime | number:'1.0-0' }}ms
+      </span>
+      @if (metrics.greetingsHandled > 0) {
+        <span class="metric">
+          <mat-icon>flash_on</mat-icon>
+          Instant: {{ metrics.greetingsHandled }}
+        </span>
+      }
+    </div>
+  }
+
   <!-- Main Content -->
   <div class="content-wrapper">
     <div class="chat-content">
@@ -44,7 +64,11 @@
         }
 
         @for (message of messages$ | async; track message.id) {
-          <div class="message" [ngClass]="'message-' + message.role">
+          <div class="message" 
+               [class.message-user]="message.role === 'user'"
+               [class.message-assistant]="message.role === 'assistant'"
+               [class.greeting-message]="message.isGreeting"
+               [class.error-message]="message.isError">
             <div class="message-avatar">
               <mat-icon>{{ message.role === 'user' ? 'person' : 'smart_toy' }}</mat-icon>
             </div>
@@ -56,12 +80,32 @@
               <div class="message-content" [ngClass]="{'error': message.isError}">
                 {{ message.content }}
               </div>
-              @if (message.metadata && message.metadata.executionTime) {
+              @if (message.metadata && (message.metadata.executionTime !== undefined || message.metadata.tablesUsed?.length || message.isGreeting)) {
                 <div class="message-meta">
-                  <span class="meta-item">
-                    <mat-icon>schedule</mat-icon>
-                    {{ message.metadata.executionTime }}ms
-                  </span>
+                  @if (message.metadata.executionTime !== undefined) {
+                    <span class="meta-item execution-time" [ngClass]="getPerformanceClass(message.metadata.executionTime)">
+                      <mat-icon>schedule</mat-icon>
+                      {{ message.metadata.executionTime }}ms
+                    </span>
+                  }
+                  @if (message.metadata.tablesUsed && message.metadata.tablesUsed.length > 0) {
+                    <span class="meta-item tables-used">
+                      <mat-icon>storage</mat-icon>
+                      {{ message.metadata.tablesUsed.length }} tables
+                    </span>
+                  }
+                  @if (message.isGreeting || message.metadata.isGreeting) {
+                    <span class="instant-badge">
+                      <mat-icon>flash_on</mat-icon>
+                      Instant
+                    </span>
+                  }
+                  @if (message.metadata.fromCache) {
+                    <span class="meta-item cache-badge">
+                      <mat-icon>cached</mat-icon>
+                      Cached
+                    </span>
+                  }
                 </div>
               }
             </div>

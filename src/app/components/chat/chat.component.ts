@@ -38,6 +38,15 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   isLoading$: Observable<boolean>;
   messageControl = new FormControl('', [Validators.required]);
 
+  // NEW: Performance metrics
+  metrics$!: Observable<any>;
+  metrics = {
+    totalQueries: 0,
+    greetingsHandled: 0,
+    avgResponseTime: 0,
+    lastQueryTime: 0
+  };
+
   quickActions = [
     { label: 'Show Tables', prompt: 'Show me all tables in the database' },
     { label: 'Customer Info', prompt: 'Show customer information' },
@@ -47,6 +56,10 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   constructor(private chatService: ChatService) {
     this.messages$ = this.chatService.messages$;
     this.isLoading$ = this.chatService.isLoading$;
+    this.metrics$ = this.chatService.metrics$;
+    
+    // Subscribe to metrics
+    this.metrics$.subscribe(m => this.metrics = m);
   }
 
   ngOnInit(): void {
@@ -98,5 +111,17 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       event.preventDefault();
       this.sendMessage();
     }
+  }
+
+  /**
+   * NEW: Get performance class for visual feedback
+   */
+  getPerformanceClass(executionTime?: number): string {
+    if (!executionTime) return '';
+
+    if (executionTime < 100) return 'instant-response';
+    if (executionTime < 1000) return 'fast-response';
+    if (executionTime < 3000) return 'normal-response';
+    return 'slow-response';
   }
 }

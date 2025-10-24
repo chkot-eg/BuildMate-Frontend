@@ -68,6 +68,32 @@
   }
 }
 
+// NEW: Performance metrics bar
+.metrics-bar {
+  display: flex;
+  gap: 20px;
+  padding: 10px 20px;
+  background: white;
+  border-bottom: 1px solid #E0E0E0;
+  font-size: 14px;
+  align-items: center;
+
+  .metric {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #666;
+    font-weight: 500;
+
+    mat-icon {
+      color: #CC0000;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
 // Content Wrapper
 .content-wrapper {
   flex: 1;
@@ -224,6 +250,36 @@
         }
       }
 
+      // NEW: Greeting message style
+      &.greeting-message {
+        .message-bubble {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border: none;
+
+          .message-header .message-role,
+          .message-header .message-time {
+            color: rgba(255, 255, 255, 0.9);
+          }
+
+          .message-content {
+            color: white;
+          }
+        }
+      }
+
+      // NEW: Error message style
+      &.error-message {
+        .message-bubble {
+          background: #ffebee;
+          border: 1px solid #ffcdd2;
+
+          .message-content {
+            color: #c62828;
+          }
+        }
+      }
+
       .message-bubble {
         flex: 1;
         padding: 12px 16px;
@@ -264,6 +320,10 @@
           margin-top: 8px;
           padding-top: 8px;
           border-top: 1px solid rgba(0,0,0,0.05);
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          align-items: center;
 
           .meta-item {
             display: inline-flex;
@@ -277,6 +337,51 @@
               width: 14px;
               height: 14px;
             }
+
+            // NEW: Performance class colors
+            &.instant-response {
+              color: #4CAF50;
+              font-weight: 600;
+            }
+
+            &.fast-response {
+              color: #8BC34A;
+              font-weight: 500;
+            }
+
+            &.normal-response {
+              color: #FF9800;
+            }
+
+            &.slow-response {
+              color: #F44336;
+              font-weight: 600;
+            }
+          }
+
+          // NEW: Instant response badge
+          .instant-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+
+            mat-icon {
+              font-size: 14px;
+              width: 14px;
+              height: 14px;
+            }
+          }
+
+          // NEW: Cache badge
+          .cache-badge {
+            color: #2196F3;
+            font-weight: 500;
           }
         }
       }
