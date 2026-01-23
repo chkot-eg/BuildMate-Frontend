@@ -55,12 +55,6 @@
               class="header-btn">
          <mat-icon>refresh</mat-icon>
       </button>
-              <!-- <button mat-icon-button 
-                (click)="clearChat()"
-                matTooltip="Clear conversation"
-                class="action-btn clear-btn">
-          <mat-icon>refresh</mat-icon>
-        </button> -->
       <button mat-icon-button 
               (click)="minimizeChat($event)" 
               [matTooltip]="(state$ | async)?.size === 'minimized' ? 'Restore' : 'Minimize'" 
@@ -210,13 +204,6 @@
                 class="action-btn context-btn">
           <mat-icon>{{ useContext ? 'history' : 'history_toggle_off' }}</mat-icon>
         </button>
-        <!-- <button mat-icon-button 
-                (click)="showQuickActions = !showQuickActions"
-                [matTooltip]="showQuickActions ? 'Hide quick actions' : 'Show quick actions'"
-                [class.active]="showQuickActions"
-                class="action-btn">
-          <mat-icon>{{ showQuickActions ? 'expand_less' : 'apps' }}</mat-icon>
-        </button> -->
         <button mat-icon-button 
                 class="action-btn attach-btn" 
                 matTooltip="Attach file (coming soon)" 
@@ -226,18 +213,30 @@
       </div>
       
       <div class="right-actions">
-        <!-- <button mat-icon-button 
-                (click)="clearChat()"
-                matTooltip="Clear conversation"
-                class="action-btn clear-btn">
-          <mat-icon>refresh</mat-icon>
-        </button> -->
         <span class="status-indicator" [class.active]="useContext">
           <mat-icon>{{ useContext ? 'cloud_done' : 'cloud_off' }}</mat-icon>
           <span class="status-text">{{ useContext ? 'Context' : 'No Context' }}</span>
         </span>
       </div>
     </div>
+
+    <!-- Voice Status Messages -->
+    @if ((voiceState$ | async)?.isRecording) {
+       <div class="voice-status-message recording">
+        <div class="recording-indicator"></div>
+        <span>Listening... Speak now</span>
+      </div>
+    }
+
+    @if ((voiceState$ | async)?.error) {
+      <div class="voice-status-message error">
+        <mat-icon>error</mat-icon>
+        <span>{{ (voiceState$ | async)?.error }}</span>
+        <button mat-icon-button (click)="clearVoiceError()" class="close-error" type="button">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    }
 
     <!-- Quick Actions Expandable -->
     @if (showQuickActions) {
@@ -256,6 +255,16 @@
 
     <!-- Input Field with Enhanced Features -->
     <div class="input-container">
+      <!-- Voice Recording Button -->  
+      <button mat-icon-button
+              (click)="toggleVoiceRecording()"
+              [matTooltip]="(voiceState$ | async)?.isRecording ? 'Stop recording' : 'Start voice recording'"
+              [class.voice-recording]="(voiceState$ | async)?.isRecording"
+              class="action-btn voice-btn"
+              type="button">
+        <mat-icon>{{ (voiceState$ | async)?.isRecording ? 'mic' : 'mic_none' }}</mat-icon>
+      </button>
+      
       <mat-form-field appearance="outline" class="message-input" [class.loading]="!!(isLoading$ | async)">
         <textarea matInput
                   #messageInput
@@ -276,7 +285,7 @@
           {{ messageControl.value?.length || 0 }} / 2000
         </mat-hint>
       </mat-form-field>
-      
+        
       <!-- Send Button (visible when not loading) -->
       @if (!(isLoading$ | async)) {
         <button mat-fab
