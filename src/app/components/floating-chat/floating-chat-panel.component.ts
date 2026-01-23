@@ -13,6 +13,11 @@ import { ChatToggleService, ChatState, ChatSize } from '../../services/chat-togg
 import { ChatService } from '../../services/chat.service';
 import { Message } from '../../models/message.model';
 import { Observable } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { VoiceService, VoiceState } from '../../services/voice.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-floating-chat-panel',
@@ -20,6 +25,7 @@ import { Observable } from 'rxjs';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -27,6 +33,7 @@ import { Observable } from 'rxjs';
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    MatSelectModule,
     CdkDrag,
     CdkDragHandle
   ],
@@ -80,14 +87,30 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
     { label: 'SQL Help', prompt: 'Help with SQL queries', icon: 'code' }
   ];
 
+  // Voice properties
+  voiceState$: Observable<VoiceState>;
+  selectedLanguage: string;
+  currentVoiceState: VoiceState = {
+    isRecording: false,
+    isProcessing: false,
+    transcript: '',
+    interimTranscript: '',
+    language: 'en-US',
+    error: null
+  };
+  private destroy$ = new Subject<void>();
+
   constructor(
     private chatToggleService: ChatToggleService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private voiceService: VoiceService
   ) {
     this.isOpen$ = this.chatToggleService.isOpen$;
     this.state$ = this.chatToggleService.state$;
     this.messages$ = this.chatService.messages$;
     this.isLoading$ = this.chatService.isLoading$;
+    this.voiceState$ = this.voiceService.voiceState$;
+    this.selectedLanguage = this.voiceService.getDefaultLanguage();
   }
 
   ngOnInit(): void {
@@ -107,7 +130,15 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
         // Only auto-scroll if user hasn't manually scrolled up
         if (!this.isUserScrolling) {
           this.shouldAutoScroll = true;
+          this.voiceService.clearTranscript();
         }
+      }
+    });
+    this.voiceState$.pipe(takeUntil(this.destroy$)).subscribe(voiceState => {
+      this.currentVoiceState = voiceState;
+      if (voiceState.transcript && !voiceState.isRecording) {
+        this.messageControl.setValue(voiceState.transcript, { emitEvent: false });
+        this.adjustTextareaHeight();
       }
     });
   }
@@ -121,12 +152,18 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
       }, 50);
     }
   }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.voiceService.stopRecording();
+  }
 
   closeChat(event?: MouseEvent): void {
     if (event) {
       event.stopPropagation();
       event.preventDefault();
     }
+    this.voiceService.stopRecording();
     this.chatToggleService.closeChat();
   }
 
@@ -407,5 +444,39 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
       this.messageControl.setValue(prompt.trim());
       this.sendMessage();
     }
+  }
+
+  toggleVoiceRecording(): void {
+    if (this.currentVoiceState.isRecording) {
+      this.voiceService.stopRecording();
+    } else {
+      this.voiceService.startRecording(this.selectedLanguage);
+    }
+  }
+
+  onLanguageChange(): void {
+    if (this.currentVoiceState.isRecording) {
+      this.voiceService.stopRecording();
+      setTimeout(() => {
+        this.voiceService.startRecording(this.selectedLanguage);
+      }, 200);
+    }
+  }
+
+  onTranscriptChange(_event: any): void {
+    const transcriptValue = this.currentVoiceState.transcript;
+    if (transcriptValue && this.messageInput?.nativeElement) {
+      if (this.messageInput.nativeElement.value !== transcriptValue) {
+        this.messageControl.setValue(transcriptValue, { emitEvent: false });
+      }
+    }
+  }
+
+  clearVoiceError(): void {
+    this.voiceService.clearTranscript();
+  }
+
+  getLanguages(): { [key: string]: string } {
+    return this.voiceService.getSupportedLanguages();
   }
 }
