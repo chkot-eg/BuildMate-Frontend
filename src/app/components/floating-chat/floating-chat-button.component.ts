@@ -17,7 +17,7 @@ import { Observable } from 'rxjs';
       mat-fab
       color="primary"
       (click)="toggleChat()">
-      <mat-icon>headset_mic</mat-icon>
+      <mat-icon>chat</mat-icon>
     </button>
   `,
   
@@ -27,14 +27,14 @@ import { Observable } from 'rxjs';
       bottom: 24px;
       right: 24px;
       z-index: 1000;
-      background: linear-gradient(135deg, #C8102E, #A50E28) !important;
-      box-shadow: 0 6px 20px rgba(200, 16, 46, 0.4);
+      background: linear-gradient(135deg, #007BFF, #0056B3) !important;
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       animation: pulse 3s ease-in-out infinite;
 
       &:hover {
         transform: scale(1.08);
-        box-shadow: 0 8px 25px rgba(200, 16, 46, 0.5);
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
         animation-play-state: paused;
       }
 
@@ -55,11 +55,11 @@ import { Observable } from 'rxjs';
     @keyframes pulse {
       0%, 100% {
         transform: scale(1);
-        box-shadow: 0 6px 20px rgba(200, 16, 46, 0.4);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
       }
       50% {
         transform: scale(1.02);
-        box-shadow: 0 8px 25px rgba(200, 16, 46, 0.6);
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.6);
       }
     }
 
