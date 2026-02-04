@@ -38,15 +38,15 @@
 
       &.active {
         background: #F5F5F5;
-        border-bottom: 3px solid #CC0000;
+        border-bottom: 3px solid #007BFF;
       }
 
       &.highlight {
-        background: #CC0000;
+        background: #007BFF;
         color: white;
 
         &:hover {
-          background: #AA0000;
+          background: #0056B3;
         }
       }
     }
@@ -86,7 +86,7 @@
   overflow: hidden;
 
   .chat-header {
-    background: linear-gradient(135deg, #CC0000, #AA0000);
+    background: linear-gradient(135deg, #007BFF, #0056B3);
     color: white;
     padding: 20px;
     text-align: center;
@@ -119,7 +119,7 @@
           font-size: 64px;
           width: 64px;
           height: 64px;
-          color: #CC0000;
+          color: #007BFF;
           opacity: 0.8;
         }
       }
@@ -154,8 +154,8 @@
 
           .quick-btn {
             background: white;
-            border: 2px solid #CC0000;
-            color: #CC0000;
+            border: 2px solid #007BFF;
+            color: #007BFF;
             padding: 10px 20px;
             border-radius: 24px;
             font-size: 14px;
@@ -164,10 +164,10 @@
             transition: all 0.3s;
 
             &:hover {
-              background: #CC0000;
+              background: #007BFF;
               color: white;
               transform: translateY(-2px);
-              box-shadow: 0 4px 12px rgba(204, 0, 0, 0.3);
+              box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
             }
           }
         }
@@ -343,7 +343,7 @@
       }
 
       .send-btn {
-        background: #CC0000;
+        background: #007BFF;
         color: white;
         border-radius: 24px;
         padding: 0 24px;
@@ -352,9 +352,9 @@
         transition: all 0.3s;
 
         &:hover:not(:disabled) {
-          background: #AA0000;
+          background: #0056B3;
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(204, 0, 0, 0.3);
+          box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
         }
 
         &:disabled {

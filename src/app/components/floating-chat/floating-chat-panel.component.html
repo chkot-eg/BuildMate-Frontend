@@ -35,7 +35,7 @@
     <div class="header-left">
       <mat-icon class="support-icon">support_agent</mat-icon>
       <div class="header-text">
-        <h3>Build Mate</h3>
+        <h3>Fabrioo</h3>
         <span class="status">
           <span class="status-dot"></span>
           Online
@@ -220,7 +220,72 @@
       </div>
     </div>
 
-    <!-- Voice Status Messages -->
+  
+    <!-- Quick Actions Expandable -->
+    @if (showQuickActions) {
+      <div class="quick-actions-inline">
+        <div class="quick-action-chips">
+          <button mat-stroked-button
+                  class="quick-chip"
+                  *ngFor="let action of quickActions"
+                  (click)="executeQuickAction(action.prompt)">
+            <mat-icon>{{ action.icon }}</mat-icon>
+            {{ action.label }}
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Contact Support Section (after first message) -->
+    @if (showContactSupport) {
+      <div class="contact-support-section">
+        <button
+          class="contact-support-btn"
+          (click)="toggleContactDetails()"
+          [class.active]="contactDetailsExpanded">
+          <div class="support-content">
+            <mat-icon>support_agent</mat-icon>
+            <span>Contact Support</span>
+          </div>
+          <mat-icon class="expand-icon">
+            {{ contactDetailsExpanded ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
+        </button>
+
+        @if (contactDetailsExpanded) {
+          <div class="contact-details" [@slideDown]>
+            <div class="contact-item">
+              <mat-icon>email</mat-icon>
+              <div class="contact-info">
+                <span class="label">Email</span>
+                <a href="mailto:support&#64;example.com">support&#64;example.com</a>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <mat-icon>phone</mat-icon>
+              <div class="contact-info">
+                <span class="label">Phone</span>
+                <a href="tel:+1234567890">+1 (234) 567-890</a>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <mat-icon>language</mat-icon>
+              <div class="contact-info">
+                <span class="label">Website</span>
+                <a href="https://example.com/support" target="_blank" rel="noopener">
+                  Visit Support Center
+                  <mat-icon class="external-icon">open_in_new</mat-icon>
+                </a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+      <!-- Voice Status Messages -->
     @if ((voiceState$ | async)?.isRecording) {
        <div class="voice-status-message recording">
         <div class="recording-indicator"></div>
@@ -235,21 +300,6 @@
         <button mat-icon-button (click)="clearVoiceError()" class="close-error" type="button">
           <mat-icon>close</mat-icon>
         </button>
-      </div>
-    }
-
-    <!-- Quick Actions Expandable -->
-    @if (showQuickActions) {
-      <div class="quick-actions-inline">
-        <div class="quick-action-chips">
-          <button mat-stroked-button 
-                  class="quick-chip"
-                  *ngFor="let action of quickActions"
-                  (click)="executeQuickAction(action.prompt)">
-            <mat-icon>{{ action.icon }}</mat-icon>
-            {{ action.label }}
-          </button>
-        </div>
       </div>
     }
 

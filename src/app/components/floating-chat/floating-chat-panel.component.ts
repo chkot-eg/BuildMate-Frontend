@@ -18,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { VoiceService, VoiceState } from '../../services/voice.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-floating-chat-panel',
@@ -38,7 +39,18 @@ import { takeUntil } from 'rxjs/operators';
     CdkDragHandle
   ],
   templateUrl: './floating-chat-panel.component.html',
-  styleUrls: ['./floating-chat-panel.component.scss']
+  styleUrls: ['./floating-chat-panel.component.scss'],
+  animations: [
+    trigger('slideDown', [
+      transition(':enter', [
+        style({ height: '0', opacity: '0', overflow: 'hidden' }),
+        animate('300ms ease-out', style({ height: '*', opacity: '1' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ height: '0', opacity: '0' }))
+      ])
+    ])
+  ]
 })
 export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
@@ -77,6 +89,10 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
 
   // Quick actions toggle
   showQuickActions = false;
+
+  // Contact Support
+  showContactSupport = false;
+  contactDetailsExpanded = false;
 
   // Quick actions list
   quickActions = [
@@ -141,6 +157,9 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
         this.adjustTextareaHeight();
       }
     });
+
+    // Check for first message to show contact support
+    this.checkFirstMessage();
   }
 
   ngAfterViewChecked(): void {
@@ -274,6 +293,9 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
   clearChat(): void {
     if (confirm('Are you sure you want to clear the chat history?')) {
       this.chatService.clearMessages();
+      // Hide contact support button when chat is cleared
+      this.showContactSupport = false;
+      this.contactDetailsExpanded = false;
     }
   }
 
@@ -478,5 +500,19 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
 
   getLanguages(): { [key: string]: string } {
     return this.voiceService.getSupportedLanguages();
+  }
+
+  // Contact Support methods
+  private checkFirstMessage(): void {
+    this.messages$.subscribe(messages => {
+      const userMessages = messages.filter(m => m.role === 'user');
+      if (userMessages.length >= 1 && !this.showContactSupport) {
+        this.showContactSupport = true;
+      }
+    });
+  }
+
+  toggleContactDetails(): void {
+    this.contactDetailsExpanded = !this.contactDetailsExpanded;
   }
 }

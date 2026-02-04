@@ -20,9 +20,9 @@ body {
   box-sizing: border-box;
 }
 
-// Material Theme Override for EG Brand Colors
+// Material Theme Override for Blue Brand Colors
 .mat-mdc-button.mat-primary {
-  --mdc-filled-button-container-color: #C8102E;
+  --mdc-filled-button-container-color: #007BFF;
   --mdc-filled-button-label-text-color: white;
   --mat-filled-button-state-layer-color: white;
   --mat-filled-button-ripple-color: rgba(255, 255, 255, 0.2);
@@ -31,7 +31,7 @@ body {
 }
 
 .mat-mdc-fab.mat-primary {
-  --mdc-fab-container-color: #C8102E;
+  --mdc-fab-container-color: #007BFF;
   --mdc-fab-icon-color: white;
   --mat-fab-state-layer-color: white;
   --mat-fab-ripple-color: rgba(255, 255, 255, 0.2);
@@ -40,28 +40,28 @@ body {
 }
 
 .mat-mdc-icon-button.mat-primary {
-  --mdc-icon-button-icon-color: #C8102E;
-  --mat-icon-button-state-layer-color: #C8102E;
-  --mat-icon-button-ripple-color: rgba(200, 16, 46, 0.1);
-  --mat-icon-button-hover-state-layer-color: rgba(200, 16, 46, 0.08);
-  --mat-icon-button-focus-state-layer-color: rgba(200, 16, 46, 0.12);
+  --mdc-icon-button-icon-color: #007BFF;
+  --mat-icon-button-state-layer-color: #007BFF;
+  --mat-icon-button-ripple-color: rgba(0, 123, 255, 0.1);
+  --mat-icon-button-hover-state-layer-color: rgba(0, 123, 255, 0.08);
+  --mat-icon-button-focus-state-layer-color: rgba(0, 123, 255, 0.12);
 }
 
 // Form field customizations
 .mat-mdc-form-field.mat-accent {
-  --mdc-filled-text-field-focus-active-indicator-color: #C8102E;
-  --mdc-filled-text-field-focus-label-text-color: #C8102E;
-  --mdc-outlined-text-field-focus-outline-color: #C8102E;
-  --mdc-outlined-text-field-focus-label-text-color: #C8102E;
+  --mdc-filled-text-field-focus-active-indicator-color: #007BFF;
+  --mdc-filled-text-field-focus-label-text-color: #007BFF;
+  --mdc-outlined-text-field-focus-outline-color: #007BFF;
+  --mdc-outlined-text-field-focus-label-text-color: #007BFF;
 }
 
 // Custom utility classes
 .text-primary {
-  color: #C8102E !important;
+  color: #007BFF !important;
 }
 
 .bg-primary {
-  background-color: #C8102E !important;
+  background-color: #007BFF !important;
 }
 
 .text-muted {
@@ -99,7 +99,7 @@ body {
 
 // Focus states for accessibility
 *:focus {
-  outline: 2px solid #C8102E;
+  outline: 2px solid #007BFF;
   outline-offset: 2px;
 }
 
@@ -107,7 +107,7 @@ button:focus,
 .mat-mdc-button:focus,
 .mat-mdc-fab:focus,
 .mat-mdc-icon-button:focus {
-  outline: 2px solid #C8102E;
+  outline: 2px solid #007BFF;
   outline-offset: 2px;
 }
 
@@ -158,7 +158,7 @@ button:focus,
   height: 20px;
   border: 2px solid #F8F9FA;
   border-radius: 50%;
-  border-top-color: #C8102E;
+  border-top-color: #007BFF;
   animation: spin 1s ease-in-out infinite;
 }
 
