@@ -33,7 +33,7 @@
   <!-- Chat Header with drag handle -->
   <div class="chat-header" cdkDragHandle>
     <div class="header-left">
-      <mat-icon class="support-icon">support_agent</mat-icon>
+      <mat-icon class="support-icon">chat</mat-icon>
       <div class="header-text">
         <h3>Fabrioo</h3>
         <span class="status">
@@ -119,15 +119,20 @@
     @for (message of messages$ | async; track message.id) {
       <div class="message" [ngClass]="'message-' + message.role">
         @if (message.role === 'assistant') {
-          <div class="avatar assistant">
+          <!-- <div class="avatar assistant">
             <mat-icon>support_agent</mat-icon>
+          </div> -->
+        }
+        @if (message.role === 'user') {
+          <div class="avatar user">
+            <mat-icon>person</mat-icon>
           </div>
         }
         <div class="message-bubble">
           <div class="message-content" [class.error-content]="message.isError">
             {{ message.content }}
           </div>
-          
+
           <!-- Metadata Display -->
           @if (message.metadata && message.role === 'assistant') {
             <div class="message-metadata">
@@ -149,12 +154,12 @@
                   Not verified
                 </span>
               }
-              @if (message.metadata.hasContext) {
+              <!-- @if (message.metadata.hasContext) {
                 <span class="metadata-chip" matTooltip="Context Used">
                   <mat-icon>history</mat-icon>
                   Context
                 </span>
-              }
+              } -->
               @if (message.metadata.cacheHit) {
                 <span class="metadata-chip" matTooltip="Cached Response">
                   <mat-icon>cached</mat-icon>
@@ -163,24 +168,19 @@
               }
             </div>
           }
-          
+
           <div class="message-time">
             {{ message.timestamp | date:'HH:mm' }}
           </div>
         </div>
-        @if (message.role === 'user') {
-          <div class="avatar user">
-            <mat-icon>person</mat-icon>
-          </div>
-        }
       </div>
     }
 
     @if (isLoading$ | async) {
       <div class="message message-assistant">
-        <div class="avatar assistant">
+        <!-- <div class="avatar assistant">
           <mat-icon>support_agent</mat-icon>
-        </div>
+        </div> -->
         <div class="message-bubble">
           <div class="typing-indicator">
             <span></span>
@@ -197,30 +197,40 @@
     <!-- Action Buttons Row -->
     <div class="input-actions-row">
       <div class="left-actions">
-        <button mat-icon-button 
-                (click)="toggleContext()" 
-                [matTooltip]="useContext ? 'Disable conversation context' : 'Enable conversation context'" 
+        <button mat-icon-button
+                (click)="toggleContext()"
+                [matTooltip]="useContext ? 'Disable conversation context' : 'Enable conversation context'"
                 [class.context-active]="useContext"
                 class="action-btn context-btn">
           <mat-icon>{{ useContext ? 'history' : 'history_toggle_off' }}</mat-icon>
         </button>
-        <button mat-icon-button 
-                class="action-btn attach-btn" 
-                matTooltip="Attach file (coming soon)" 
+        <button mat-icon-button
+                class="action-btn attach-btn"
+                matTooltip="Attach file (coming soon)"
                 disabled>
           <mat-icon>attach_file</mat-icon>
         </button>
       </div>
-      
-      <div class="right-actions">
-        <span class="status-indicator" [class.active]="useContext">
-          <mat-icon>{{ useContext ? 'cloud_done' : 'cloud_off' }}</mat-icon>
-          <span class="status-text">{{ useContext ? 'Context' : 'No Context' }}</span>
-        </span>
-      </div>
+
+      @if (showContactSupport) {
+        <div class="center-actions">
+          <button
+            class="contact-support-btn-centered"
+            (click)="toggleContactDetails()"
+            [class.active]="contactDetailsExpanded">
+            <mat-icon>support_agent</mat-icon>
+            <span>Contact Support</span>
+            <mat-icon class="expand-icon">
+              {{ contactDetailsExpanded ? 'expand_less' : 'expand_more' }}
+            </mat-icon>
+          </button>
+        </div>
+      }
+
+      <div class="right-actions-spacer"></div>
     </div>
 
-  
+
     <!-- Quick Actions Expandable -->
     @if (showQuickActions) {
       <div class="quick-actions-inline">
@@ -236,52 +246,35 @@
       </div>
     }
 
-    <!-- Contact Support Section (after first message) -->
-    @if (showContactSupport) {
-      <div class="contact-support-section">
-        <button
-          class="contact-support-btn"
-          (click)="toggleContactDetails()"
-          [class.active]="contactDetailsExpanded">
-          <div class="support-content">
-            <mat-icon>support_agent</mat-icon>
-            <span>Contact Support</span>
+    <!-- Contact Details Expandable -->
+    @if (showContactSupport && contactDetailsExpanded) {
+      <div class="contact-details-section" [@slideDown]>
+        <div class="contact-item">
+          <mat-icon>email</mat-icon>
+          <div class="contact-info">
+            <span class="label">Email</span>
+            <a href="mailto:support&#64;example.com">support&#64;example.com</a>
           </div>
-          <mat-icon class="expand-icon">
-            {{ contactDetailsExpanded ? 'expand_less' : 'expand_more' }}
-          </mat-icon>
-        </button>
+        </div>
 
-        @if (contactDetailsExpanded) {
-          <div class="contact-details" [@slideDown]>
-            <div class="contact-item">
-              <mat-icon>email</mat-icon>
-              <div class="contact-info">
-                <span class="label">Email</span>
-                <a href="mailto:support&#64;example.com">support&#64;example.com</a>
-              </div>
-            </div>
-
-            <div class="contact-item">
-              <mat-icon>phone</mat-icon>
-              <div class="contact-info">
-                <span class="label">Phone</span>
-                <a href="tel:+1234567890">+1 (234) 567-890</a>
-              </div>
-            </div>
-
-            <div class="contact-item">
-              <mat-icon>language</mat-icon>
-              <div class="contact-info">
-                <span class="label">Website</span>
-                <a href="https://example.com/support" target="_blank" rel="noopener">
-                  Visit Support Center
-                  <mat-icon class="external-icon">open_in_new</mat-icon>
-                </a>
-              </div>
-            </div>
+        <div class="contact-item">
+          <mat-icon>phone</mat-icon>
+          <div class="contact-info">
+            <span class="label">Phone</span>
+            <a href="tel:+1234567890">+1 (234) 567-890</a>
           </div>
-        }
+        </div>
+
+        <div class="contact-item">
+          <mat-icon>language</mat-icon>
+          <div class="contact-info">
+            <span class="label">Website</span>
+            <a href="https://example.com/support" target="_blank" rel="noopener">
+              Visit Support Center
+              <mat-icon class="external-icon">open_in_new</mat-icon>
+            </a>
+          </div>
+        </div>
       </div>
     }
 

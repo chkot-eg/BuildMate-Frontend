@@ -183,6 +183,8 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
       event.preventDefault();
     }
     this.voiceService.stopRecording();
+    this.voiceService.clearTranscript();
+    this.messageControl.setValue('', { emitEvent: false });
     this.chatToggleService.closeChat();
   }
 
@@ -252,6 +254,9 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
       // Mark as pristine to prevent validation flicker
       this.messageControl.markAsPristine();
       this.messageControl.markAsUntouched();
+
+      // Clear voice transcript
+      this.voiceService.clearTranscript();
 
       // Reset textarea height to default
       if (inputElement) {
