@@ -27,14 +27,14 @@ import { Observable } from 'rxjs';
       bottom: 24px;
       right: 24px;
       z-index: 1000;
-      background: linear-gradient(135deg, #007BFF, #0056B3) !important;
-      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+      background: linear-gradient(135deg, #2196F3, #1976D2) !important;
+      box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       animation: pulse 3s ease-in-out infinite;
 
       &:hover {
         transform: scale(1.08);
-        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
+        box-shadow: 0 8px 25px rgba(33, 150, 243, 0.5);
         animation-play-state: paused;
       }
 
@@ -55,11 +55,11 @@ import { Observable } from 'rxjs';
     @keyframes pulse {
       0%, 100% {
         transform: scale(1);
-        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
       }
       50% {
         transform: scale(1.02);
-        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.6);
+        box-shadow: 0 8px 25px rgba(33, 150, 243, 0.6);
       }
     }
 
