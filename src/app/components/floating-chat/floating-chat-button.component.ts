@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
 import { ChatToggleService } from '../../services/chat-toggle.service';
+import { FeatureTourService } from '../../services/feature-tour.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -117,11 +118,21 @@ import { Observable } from 'rxjs';
 export class FloatingChatButtonComponent {
   isOpen$: Observable<boolean>;
 
-  constructor(private chatToggleService: ChatToggleService) {
+  constructor(
+    private chatToggleService: ChatToggleService,
+    private tourService: FeatureTourService
+  ) {
     this.isOpen$ = this.chatToggleService.isOpen$;
   }
 
   toggleChat(): void {
     this.chatToggleService.openChat();
+
+    // Show tour on first chat open
+    if (!this.tourService.hasSeenTour()) {
+      setTimeout(() => {
+        this.tourService.startTour();
+      }, 800);
+    }
   }
 }

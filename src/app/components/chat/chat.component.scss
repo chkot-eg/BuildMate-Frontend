@@ -1,71 +1,8 @@
 .chat-container {
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background: #F5F5F5;
-}
-
-// Header Bar
-.header-bar {
-  background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0;
-  height: 48px;
-  z-index: 10;
-
-  .header-nav {
-    display: flex;
-    height: 100%;
-
-    .nav-btn {
-      background: white;
-      border: none;
-      padding: 0 20px;
-      font-size: 11px;
-      font-weight: 600;
-      color: #333;
-      cursor: pointer;
-      border-right: 1px solid #E0E0E0;
-      transition: all 0.3s;
-      white-space: nowrap;
-
-      &:hover {
-        background: #F5F5F5;
-      }
-
-      &.active {
-        background: #F5F5F5;
-        border-bottom: 3px solid #007BFF;
-      }
-
-      &.highlight {
-        background: #007BFF;
-        color: white;
-
-        &:hover {
-          background: #0056B3;
-        }
-      }
-    }
-  }
-
-  .economy-btn {
-    background: #FFA500;
-    color: white;
-    border: none;
-    padding: 0 24px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-
-    &:hover {
-      background: #FF8C00;
-    }
-  }
 }
 
 // Content Wrapper
@@ -421,17 +358,6 @@
 
 // Responsive
 @media (max-width: 768px) {
-  .header-bar {
-    .header-nav {
-      overflow-x: auto;
-
-      .nav-btn {
-        padding: 0 15px;
-        font-size: 10px;
-      }
-    }
-  }
-
   .content-wrapper {
     margin: 10px;
   }
