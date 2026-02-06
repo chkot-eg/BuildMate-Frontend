@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "ibmi-chatbot": {
+    "bs-assistant-web": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -21,7 +21,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/ibmi-chatbot",
+            "outputPath": "dist/bs-assistant-web",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -72,10 +72,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "ibmi-chatbot:build:production"
+              "buildTarget": "bs-assistant-web:build:production"
             },
             "development": {
-              "buildTarget": "ibmi-chatbot:build:development"
+              "buildTarget": "bs-assistant-web:build:development"
             }
           },
           "defaultConfiguration": "development"
