@@ -1,6 +1,6 @@
 .app-container {
   display: flex;
-  height: calc(100vh - 80px); // Subtract header height
+  height: calc(100vh - 96px - 46px); // header (96px) + page-banner (46px)
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -11,27 +11,58 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #F5F5F5;
+  background: #f9f9f9;
+}
 
-  .welcome-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    text-align: center;
+.page-banner {
+  width: 100%;
+  background: #023266;
+  color: white;
+  padding: 14px 32px 14px 254px;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  text-align: left;
+}
 
-    h1 {
-      color: #333;
-      font-size: 36px;
-      font-weight: 300;
-      margin-bottom: 16px;
+.welcome-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  background: #ffffff;
+  overflow: auto;
+
+  .welcome-title {
+    color: #1a1a1a;
+    font-size: 48px;
+    font-weight: 400;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0 0 32px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .welcome-logo {
+    margin-bottom: 32px;
+
+    .eg-logo {
+      width: 240px;
+      height: auto;
+      object-fit: contain;
     }
+  }
 
-    p {
-      color: #666;
-      font-size: 18px;
-    }
+  .welcome-tagline {
+    color: #1a1a1a;
+    font-size: 32px;
+    font-weight: 300;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.3px;
+    margin: 0;
   }
 }

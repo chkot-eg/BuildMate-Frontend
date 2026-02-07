@@ -43,39 +43,27 @@
       </div>
     </div>
     <div class="header-actions">
-      <button mat-icon-button 
-              (click)="exportChat()" 
-              matTooltip="Export Chat" 
+      <button mat-icon-button
+              (click)="exportChat()"
+              matTooltip="Export Chat"
               class="header-btn">
         <mat-icon>download</mat-icon>
       </button>
-      <button mat-icon-button 
-              (click)="clearChat()" 
-              matTooltip="Clear conversation " 
+      <button mat-icon-button
+              (click)="clearChat()"
+              matTooltip="Clear conversation "
               class="header-btn">
          <mat-icon>refresh</mat-icon>
       </button>
-      <button mat-icon-button 
-              (click)="minimizeChat($event)" 
-              [matTooltip]="(state$ | async)?.size === 'minimized' ? 'Restore' : 'Minimize'" 
-              class="header-btn">
-        <mat-icon>{{ (state$ | async)?.size === 'minimized' ? 'add' : 'remove' }}</mat-icon>
-      </button>
-      <button mat-icon-button 
-              (click)="expandChat($event)" 
-              [matTooltip]="(state$ | async)?.size === 'expanded' ? 'Normal Size' : 'Expand'" 
-              class="header-btn">
-        <mat-icon>{{ (state$ | async)?.size === 'expanded' ? 'close_fullscreen' : 'open_in_full' }}</mat-icon>
-      </button>
-      <button mat-icon-button 
-              (click)="maximizeChat($event)" 
-              [matTooltip]="(state$ | async)?.size === 'fullscreen' ? 'Exit Fullscreen' : 'Fullscreen'" 
+      <button mat-icon-button
+              (click)="maximizeChat($event)"
+              [matTooltip]="(state$ | async)?.size === 'fullscreen' ? 'Exit Fullscreen' : 'Fullscreen'"
               class="header-btn">
         <mat-icon>{{ (state$ | async)?.size === 'fullscreen' ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
       </button>
-      <button mat-icon-button 
-              (click)="closeChat($event)" 
-              matTooltip="Close" 
+      <button mat-icon-button
+              (click)="closeChat($event)"
+              matTooltip="Close"
               class="header-btn close-btn">
         <mat-icon>close</mat-icon>
       </button>
@@ -314,6 +302,7 @@
                   [formControl]="messageControl"
                   (keydown)="onKeyDown($event)"
                   (input)="adjustTextareaHeight()"
+                  (focus)="onTextareaFocus()"
                   [readonly]="!!(isLoading$ | async)"
                   placeholder="Type your message here..."
                   autocomplete="off"

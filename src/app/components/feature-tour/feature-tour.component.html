@@ -1,0 +1,57 @@
+<!-- Welcome Screen -->
+@if (showWelcome && isChatOpen) {
+  <div class="feature-tour-overlay" [@fadeIn]>
+    <div class="tour-welcome">
+      <div class="welcome-card">
+        <div class="welcome-header">
+          <mat-icon class="welcome-icon">explore</mat-icon>
+          <h2>Welcome to Fabrioo Chat!</h2>
+        </div>
+        <p class="welcome-text">
+          Explore all the powerful features at your fingertips. Click below to start using the app!
+        </p>
+        <div class="welcome-actions">
+          <button mat-flat-button color="primary" (click)="startUsingApp()" class="start-app-btn">
+            <mat-icon>check_circle</mat-icon>
+            Start Using App
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Step-by-Step Tour -->
+@if (showTour && isChatOpen && currentFeature) {
+  <div class="feature-tour-overlay" [@fadeIn] (click)="onTourClick()">
+    <!-- SVG for current dotted line -->
+    <svg class="connection-lines">
+      @for (path of svgPaths; track $index) {
+        <path
+          [attr.d]="path"
+          class="dotted-line"
+        />
+      }
+      @for (line of svgLines; track $index) {
+        <!-- Endpoint circle at target -->
+        <circle
+          [attr.cx]="line.x2"
+          [attr.cy]="line.y2"
+          r="5"
+          class="line-endpoint"
+        />
+      }
+    </svg>
+
+    <!-- Current Feature Label -->
+    <div
+      class="feature-label"
+      [style.left.px]="currentFeature.labelPosition.x"
+      [style.top.px]="currentFeature.labelPosition.y">
+      <div class="label-content">
+        <mat-icon>info</mat-icon>
+        <span>{{ currentFeature.title }}</span>
+      </div>
+    </div>
+  </div>
+}

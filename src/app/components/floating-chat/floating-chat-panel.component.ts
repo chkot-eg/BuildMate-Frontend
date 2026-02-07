@@ -43,11 +43,11 @@ import { trigger, transition, style, animate } from '@angular/animations';
   animations: [
     trigger('slideDown', [
       transition(':enter', [
-        style({ height: '0', opacity: '0', overflow: 'hidden' }),
-        animate('300ms ease-out', style({ height: '*', opacity: '1' }))
+        style({ transform: 'translateY(-20px)', opacity: '0' }),
+        animate('300ms ease-out', style({ transform: 'translateY(0)', opacity: '1' }))
       ]),
       transition(':leave', [
-        animate('200ms ease-in', style({ height: '0', opacity: '0' }))
+        animate('200ms ease-in', style({ transform: 'translateY(-20px)', opacity: '0' }))
       ])
     ])
   ]
@@ -519,5 +519,31 @@ export class FloatingChatPanelComponent implements OnInit, AfterViewChecked {
 
   toggleContactDetails(): void {
     this.contactDetailsExpanded = !this.contactDetailsExpanded;
+  }
+
+  onTextareaFocus(): void {
+    // Collapse contact support when user clicks on textarea
+    if (this.contactDetailsExpanded) {
+      this.contactDetailsExpanded = false;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    // Check if contact support is expanded
+    if (!this.contactDetailsExpanded) {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+
+    // Check if click is outside contact support area
+    const contactButton = target.closest('.contact-support-btn-centered');
+    const contactDetails = target.closest('.contact-details-section');
+
+    // If click is not on the button or the details section, collapse it
+    if (!contactButton && !contactDetails) {
+      this.contactDetailsExpanded = false;
+    }
   }
 }

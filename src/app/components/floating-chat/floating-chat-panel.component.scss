@@ -5,12 +5,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   z-index: 999;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-  backdrop-filter: blur(2px);
+  transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 0.3s ease;
 
   &.open {
     opacity: 1;
@@ -18,7 +19,9 @@
   }
 
   &.fullscreen {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
   }
 }
 
@@ -35,7 +38,8 @@
   display: none;
   flex-direction: column;
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease, visibility 0.2s ease;
@@ -419,9 +423,13 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    overflow: visible;
+    position: relative;
+    z-index: 10;
 
     // Action Buttons Row
     .input-actions-row {
+      position: relative;
       display: grid;
       grid-template-columns: auto 1fr auto;
       align-items: center;
@@ -439,6 +447,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        position: relative;
+        overflow: visible;
       }
 
       .right-actions-spacer {
@@ -626,16 +636,20 @@
 
     // Contact Details Section (Expandable)
     .contact-details-section {
-      animation: slideDown 0.3s ease-out;
-      margin-top: 12px;
-      margin-bottom: 12px;
-      margin-left: 62px;
-      margin-right: 62px;
+      position: absolute;
+      bottom: 100%;
+      left: 62px;
+      right: 62px;
+      margin-bottom: 8px;
       padding: 16px;
       background: #F8F9FA;
       border-radius: 12px;
       border: 1px solid #E9ECEF;
-      overflow: hidden;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      animation: slideUp 0.3s ease-out;
+      max-height: 300px;
+      overflow-y: auto;
 
       .contact-item {
         display: flex;

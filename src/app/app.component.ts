@@ -4,6 +4,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FloatingChatButtonComponent } from './components/floating-chat/floating-chat-button.component';
 import { FloatingChatPanelComponent } from './components/floating-chat/floating-chat-panel.component';
 import { HeaderComponent } from './components/header/header.component';
+import { FeatureTourComponent } from './components/feature-tour/feature-tour.component';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,8 @@ import { HeaderComponent } from './components/header/header.component';
     HeaderComponent,
     SidebarComponent,
     FloatingChatButtonComponent,
-    FloatingChatPanelComponent
+    FloatingChatPanelComponent,
+    FeatureTourComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
